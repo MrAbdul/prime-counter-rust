@@ -41,22 +41,26 @@ impl Display for Number {
         write!(f, "{}", self.val)
     }
 }
-
-fn sieve_of_eratosthenes(limit: i32) -> Vec<Number> {
+fn prepare_data(limit:i32)->Vec<Number>{
     //first i want to generate the full list of all numbers up until the limit
     //i used the range syntax and added 1 to make it exclusive, and started at 2 since we know 1 is not a prime
     let mut data: Vec<Number> = Vec::new();
     for x in 2..limit + 1 {
         data.push(Number::new(x));
     }
-    let mut current_p = 2;
-    loop {
-        for item in data.iter_mut() {
-            //check if item
+    data
+}
+fn sieve_of_eratosthenes(limit: i32) -> Vec<Number> {
 
-            if item.val != current_p && !item.marked && item.val % current_p == 0 {
-                item.marked = true
+    let mut current_p = 2;
+    let mut data =prepare_data(limit);
+    loop {
+        let mut i=0;
+        while i<data.len(){
+            if data[i].val != current_p  && data[i].val % current_p == 0 {
+                data.remove(i);
             }
+            i+=1;
         }
         let p = get_p(&data, current_p);
         match p {
@@ -66,7 +70,7 @@ fn sieve_of_eratosthenes(limit: i32) -> Vec<Number> {
             Some(val) => current_p = val,
         }
 
-        // println!("2 reminder of 10",  )
+        
     }
 
     data
