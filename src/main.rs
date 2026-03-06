@@ -86,3 +86,63 @@ fn get_p(data: &Vec<Number>, current_p: i32) -> Option<i32> {
     }
     None
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs;
+
+    fn load_known_primes(path: &str) -> Vec<i32> {
+        let content = fs::read_to_string(path).expect("failed to read primes file");
+
+        content
+            .split_whitespace()
+            .map(|s| s.parse::<i32>().expect("failed to parse prime from file"))
+            .collect()
+    }
+
+    fn assert_first_n_primes_match(actual: Vec<i32>, path: &str, count: usize) {
+        let expected: Vec<i32> = load_known_primes(path).into_iter().take(count).collect();
+
+        assert_eq!(
+            actual.len(),
+            count,
+            "algorithm returned {} primes, expected {}",
+            actual.len(),
+            count
+        );
+
+        assert_eq!(actual, expected, "generated primes do not match file");
+    }
+
+    #[test]
+    fn test_first_100_primes() {
+        // Example: if you know your sieve limit is enough to produce at least 100 primes
+        let actual: Vec<i32> = sieve_of_eratosthenes(541)
+            .into_iter()
+            .map(|n| n.val)
+            .take(100)
+            .collect();
+
+        assert_first_n_primes_match(
+            actual,
+            "test/data/primes1.txt",
+            100
+        );
+    }
+    #[test]
+    fn test_up_to10000_primes() {
+        // Example: if you know your sieve limit is enough to produce at least 100 primes
+        let actual: Vec<i32> = sieve_of_eratosthenes(10000)
+            .into_iter()
+            .map(|n| n.val)
+            .take(1229)
+            .collect();
+
+        assert_first_n_primes_match(
+            actual,
+            "test/data/primes1.txt",
+            1229
+        );
+    }
+}
